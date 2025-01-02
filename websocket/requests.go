@@ -1,10 +1,7 @@
 package websocket
 
 import (
-	"encoding/json"
 	"math/big"
-
-	log "github.com/sirupsen/logrus"
 )
 
 // EventType - data structure for parsing events
