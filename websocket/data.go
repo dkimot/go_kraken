@@ -4,8 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"time"
-
-	"github.com/pkg/errors"
 )
 
 // Update - notification from channel or events
@@ -189,98 +187,34 @@ func (s *Spread) UnmarshalJSON(data []byte) error {
 	return json.Unmarshal(data, &raw)
 }
 
-// OrderBookItem - data structure for order book item
-type OrderBookItem struct {
-	Price     json.Number
-	Volume    json.Number
-	Time      json.Number
-	Republish bool
+type OrderEventType string
+
+const (
+  OrderEventTypeAdd    OrderEventType = "add"
+  OrderEventTypeModify OrderEventType = "modify"
+  OrderEventTypeDelete OrderEventType = "delete"
+)
+
+type OrderEvent struct {
+  Event      OrderEventType `json:"event"`
+  OrderID    string     `json:"order_id"`
+  LimitPrice float64    `json:"limit_price"`
+  OrderQty   float64    `json:"order_qty"`
+  Timestamp  time.Time  `json:"timestamp"`
 }
-
-// UnmarshalJSON - unmarshal candle update
-func (obi *OrderBookItem) UnmarshalJSON(data []byte) error {
-	var raw []json.RawMessage
-	if err := json.Unmarshal(data, &raw); err != nil {
-		return err
-	}
-
-	if len(raw) < 3 {
-		return errors.Errorf("Invalid order book item: %s", string(data))
-	}
-
-	obi.Republish = len(raw) == 4
-
-	if err := json.Unmarshal(raw[0], &obi.Price); err != nil {
-		return err
-	}
-
-	if err := json.Unmarshal(raw[1], &obi.Volume); err != nil {
-		return err
-	}
-
-	return json.Unmarshal(raw[2], &obi.Time)
-}
-
-// OrderBookUpdate - data structure for order book update
-type OrderBookUpdate struct {
-	Asks       []OrderBookItem
-	Bids       []OrderBookItem
-	CheckSum   string
-	IsSnapshot bool
-}
-
-// UnmarshalJSON - unmarshal candle update
-func (obu *OrderBookUpdate) UnmarshalJSON(data []byte) error {
-	body := make(map[string]json.RawMessage)
-	if err := json.Unmarshal(data, &body); err != nil {
-		return err
-	}
-
-	for key, raw := range body {
-		if len(key) == 2 {
-			obu.IsSnapshot = true
-		}
-
-		switch key[0] {
-		case 'a':
-			if err := json.Unmarshal(raw, &obu.Asks); err != nil {
-				return err
-			}
-		case 'b':
-			if err := json.Unmarshal(raw, &obu.Bids); err != nil {
-				return err
-			}
-		case 'c':
-			if err := json.Unmarshal(raw, &obu.CheckSum); err != nil {
-				return err
-			}
-		}
-	}
-
-	return nil
-}
-
-type OrderItem struct {
-  OrderID    string    `json:"order_id"`
-  LimitPrice float64   `json:"limit_price"`
-  OrderQty   float64   `json:"order_qty"`
-  Timestamp  time.Time `json:"timestamp"`
-}
-
-func (oi *OrderItem) UnmarshalJSON(data []byte) error {
-  return json.Unmarshal(data, oi)
-} 
 
 type OrdersUpdate struct {
-  Symbol     string
-  Bids       []OrderItem
-  Asks       []OrderItem
-  Checksum   string
-  IsSnapshot bool
+  Symbol     string       `json:"symbol"`
+  Bids       []OrderEvent `json:"bids"`
+  Asks       []OrderEvent `json:"asks"`
+  Checksum   int64        `json:"checksum"`
+  IsSnapshot bool         `json:"snapshot"`
 }
 
-func (ou *OrdersUpdate) UnmarshalJSON(data []byte) error {
-  return json.Unmarshal(data, &ou)
+type OrdersUpdateFullMessage struct {
+  Channel string         `json:"channel"`
+  Type    string         `json:"type"`
+  Data    []*OrdersUpdate `json:"data"`
 }
 
 // OwnTrade - Own trades.

@@ -6,7 +6,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/aopoltorzhicky/go_kraken/rest"
+	"github.com/dkimot/go_kraken/rest"
 	"github.com/gorilla/websocket"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
@@ -217,6 +217,7 @@ func (k *Kraken) handleMessage(data []byte) error {
 	if len(data) == 0 {
 		return errors.Errorf("Empty response: %s", string(data))
 	}
+
 	switch data[0] {
 	case '[':
 		return k.handleChannel(data)

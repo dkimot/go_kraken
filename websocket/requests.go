@@ -6,7 +6,8 @@ import (
 
 // EventType - data structure for parsing events
 type EventType struct {
-	Event string `json:"event"`
+  Channel string `json:"channel"`
+  Type    string `json:"type"`
 }
 
 // Subscription - data structure of subscription entity
