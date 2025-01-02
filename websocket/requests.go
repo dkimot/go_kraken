@@ -3,6 +3,8 @@ package websocket
 import (
 	"encoding/json"
 	"math/big"
+
+	log "github.com/sirupsen/logrus"
 )
 
 // EventType - data structure for parsing events
@@ -84,11 +86,17 @@ type OrdersSubscriptionRequest struct {
   Token    string   `json:"token"`
 }
 
-func (osr *OrdersSubscriptionRequest) MarshalJSON() ([]byte, error) {
-  return json.Marshal(map[string]any{
+func NewOrdersSubscriptionRequest(pairs []string, depth int64, token string) map[string]any {
+  return map[string]any{
     "method": "subscribe",
-    "params": osr,
-  })
+    "params": OrdersSubscriptionRequest{
+      Channel:  "level3",
+      Symbol:   pairs,
+      Depth:    depth,
+      Snapshot: true,
+      Token:    token,
+    },
+  }
 }
 
 // AuthRequest -
