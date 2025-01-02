@@ -1,6 +1,7 @@
 package websocket
 
 import (
+	"encoding/json"
 	"math/big"
 )
 
@@ -73,8 +74,21 @@ type AuthDataRequest struct {
 type AuthSubscriptionRequest struct {
 	Event string          `json:"event"`
 	Subs  AuthDataRequest `json:"subscription"`
-  Pairs []string        `json:"symbol,omitempty"`
-  Depth int64           `json:"depth,omitempty"`
+}
+
+type OrdersSubscriptionRequest struct {
+  Channel  string   `json:"channel"`
+  Symbol   []string `json:"symbol"`
+  Depth    int64    `json:"depth"`
+  Snapshot bool     `json:"snapshot"`
+  Token    string   `json:"token"`
+}
+
+func (osr *OrdersSubscriptionRequest) MarshalJSON() ([]byte, error) {
+  return json.Marshal(map[string]any{
+    "method": "subscribe",
+    "params": osr,
+  })
 }
 
 // AuthRequest -
