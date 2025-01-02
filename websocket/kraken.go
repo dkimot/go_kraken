@@ -339,6 +339,19 @@ func (k *Kraken) subscribeToPrivate(channelName string) error {
 	})
 }
 
+// SubscribeOrders - method tries to subscribe on Orders (level3) channel events
+func (k *Kraken) SubscribeOrders(pairs []string, depth int64) error {
+	return k.send(AuthSubscriptionRequest{
+		Event: EventSubscribe,
+    Pairs: pairs,
+    Depth: depth,
+		Subs: AuthDataRequest{
+			Name:  ChanOrders,
+			Token: k.token,
+		},
+	})
+}
+
 // SubscribeOwnTrades - method tries to subscribe on OwnTrades channel events
 func (k *Kraken) SubscribeOwnTrades() error {
 	return k.subscribeToPrivate(ChanOwnTrades)

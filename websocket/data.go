@@ -3,6 +3,7 @@ package websocket
 import (
 	"encoding/json"
 	"fmt"
+	"time"
 
 	"github.com/pkg/errors"
 )
@@ -257,6 +258,29 @@ func (obu *OrderBookUpdate) UnmarshalJSON(data []byte) error {
 	}
 
 	return nil
+}
+
+type OrderItem struct {
+  OrderID    string    `json:"order_id"`
+  LimitPrice float64   `json:"limit_price"`
+  OrderQty   float64   `json:"order_qty"`
+  Timestamp  time.Time `json:"timestamp"`
+}
+
+func (oi *OrderItem) UnmarshalJSON(data []byte) error {
+  return json.Unmarshal(data, oi)
+} 
+
+type OrdersUpdate struct {
+  Symbol     string
+  Bids       []OrderItem
+  Asks       []OrderItem
+  Checksum   string
+  IsSnapshot bool
+}
+
+func (ou *OrdersUpdate) UnmarshalJSON(data []byte) error {
+  return json.Unmarshal(data, &ou)
 }
 
 // OwnTrade - Own trades.

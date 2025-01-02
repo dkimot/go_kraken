@@ -15,6 +15,7 @@ const (
 	ChanTicker     = "ticker"
 	ChanCandles    = "ohlc"
 	ChanSpread     = "spread"
+  ChanOrders     = "level3"
 	ChanOpenOrders = "openOrders"
 	ChanOwnTrades  = "ownTrades"
 	ChanAll        = "*"

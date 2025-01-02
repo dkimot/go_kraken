@@ -19,6 +19,12 @@ func (k *Kraken) handleChannel(data []byte) error {
 			return err
 		}
 		k.msg <- msg.toUpdate(ticker)
+  case ChanOrders:
+    var orders OrdersUpdate
+    if err := json.Unmarshal(msg.Data, &orders); err != nil {
+      return err
+    }
+    k.msg <- msg.toUpdate(orders)
 	case ChanCandles:
 		var candle Candle
 		if err := json.Unmarshal(msg.Data, &candle); err != nil {

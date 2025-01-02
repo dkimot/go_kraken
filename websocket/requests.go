@@ -73,6 +73,8 @@ type AuthDataRequest struct {
 type AuthSubscriptionRequest struct {
 	Event string          `json:"event"`
 	Subs  AuthDataRequest `json:"subscription"`
+  Pairs []string        `json:"symbol,omitempty"`
+  Depth int64           `json:"depth,omitempty"`
 }
 
 // AuthRequest -
