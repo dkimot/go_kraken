@@ -157,6 +157,7 @@ func (c *Candle) UnmarshalJSON(data []byte) error {
 }
 
 type Trade struct {
+  TradeID   string      `json:"trade_id"`
   Symbol    string      `json:"symbol"`
   Side      string      `json:"side"`
   Price     json.Number `json:"price"`
