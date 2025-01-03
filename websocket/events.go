@@ -43,6 +43,8 @@ func (k *Kraken) handleOrdersSnapshotEvent(msg []byte) error {
     return err
   }
 
+  snapshotMsg.Data[0].IsSnapshot = true
+
   k.msg <- Update{
     ChannelName: fmt.Sprintf("%s:snapshot", ChanOrders),
     Data:        *snapshotMsg.Data[0],
