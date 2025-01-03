@@ -14,8 +14,12 @@ func (k *Kraken) handleEvent(msg []byte) error {
 	}
 
   switch event.Channel {
+  case ChanHeartbeat:
+    return nil
   case ChanOrders:
     return k.handleOrdersEvent(msg, event)
+  case ChanTrades:
+    return k.handleTradesEvent(msg, event)
   default:
 		log.Warnf("unknown event: %s", msg)
   }
@@ -62,6 +66,34 @@ func (k *Kraken) handleOrdersUpdateEvent(msg []byte) error {
   k.msg <- Update{
     ChannelName: fmt.Sprintf("%s:update", ChanOrders),
     Data:        *updateMsg.Data[0],
+  }
+
+  return nil
+}
+
+func (k *Kraken) handleTradesEvent(msg []byte, event EventType) error {
+  switch event.Type {
+  case "update":
+    return k.handleTradesUpdateEvent(msg)
+  case "snapshot":
+    return nil
+
+  default:
+    log.Warnf("unknown trades event type: %s", msg)
+  }
+
+  return nil
+}
+
+func (k *Kraken) handleTradesUpdateEvent(msg []byte) error {
+  var updateMsg TradesUpdateMessage
+  if err := json.Unmarshal(msg, &updateMsg); err != nil {
+    return err
+  }
+
+  k.msg <- Update{
+    ChannelName: fmt.Sprintf("%s:update", ChanTrades),
+    Data:        updateMsg.Data,
   }
 
   return nil

@@ -97,6 +97,17 @@ func NewOrdersSubscriptionRequest(pairs []string, depth int64, token string) map
   }
 }
 
+func NewTradesSubscriptionRequest(symbol []string) map[string]any {
+  return map[string]any{
+    "method": "subscribe",
+    "params": map[string]any{
+      "channel": "trade",
+      "symbol":  symbol,
+      "snapshot": false,
+    },
+  }
+}
+
 // AuthRequest -
 type AuthRequest struct {
 	Token string `json:"token"`

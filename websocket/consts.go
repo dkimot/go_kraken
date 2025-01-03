@@ -11,6 +11,7 @@ const (
 // Available channels
 const (
 	ChanBook       = "book"
+  ChanHeartbeat  = "heartbeat"
 	ChanTrades     = "trade"
 	ChanTicker     = "ticker"
 	ChanCandles    = "ohlc"

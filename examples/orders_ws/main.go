@@ -15,7 +15,7 @@ func main() {
   signals := make(chan os.Signal, 1)
 	signal.Notify(signals, os.Interrupt, syscall.SIGTERM, syscall.SIGINT)
 
-	kraken := ws.NewKraken("wss://ws-auth.kraken.com/v2", ws.WithLogLevel(log.TraceLevel))
+	kraken := ws.NewKraken("wss://ws.kraken.com/v2", ws.WithLogLevel(log.InfoLevel))
 	if err := kraken.Connect(); err != nil {
 		log.Fatalf("Error connecting to web socket: %s", err.Error())
 	}
@@ -25,8 +25,12 @@ func main() {
 	}
 
   // subscribe to BTCUSD`s orders
-  if err := kraken.SubscribeOrders([]string{"SC/USD"}, ws.Depth10); err != nil {
-    log.Fatalf("SubscribeOrders error: %s", err.Error())
+  // if err := kraken.SubscribeOrders([]string{"BTC/USD"}, ws.Depth10); err != nil {
+  //   log.Fatalf("SubscribeOrders error: %s", err.Error())
+  // }
+
+  if err := kraken.SubscribeTrades([]string{"BTC/USD"}); err != nil {
+    log.Fatalf("SubscribeTrades error: %s", err.Error())
   }
 
   // 10 - a depth of order book
@@ -47,6 +51,10 @@ func main() {
       switch data := update.Data.(type) {
       case ws.OrdersUpdate: // could be a snapshot or an update
         log.Infof("Orders update: %+v\n", data)
+      case []*ws.Trade:
+        for _, trade := range data {
+          log.Infof("Trade update: %+v\n", trade)
+        }
 			default:
 			}
 		}

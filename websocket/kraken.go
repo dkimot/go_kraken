@@ -253,13 +253,7 @@ func (k *Kraken) SubscribeCandles(pairs []string, interval int64) error {
 
 // SubscribeTrades - Trade feed for a currency pair.
 func (k *Kraken) SubscribeTrades(pairs []string) error {
-	return k.send(SubscriptionRequest{
-		Event: EventSubscribe,
-		Pairs: pairs,
-		Subscription: Subscription{
-			Name: ChanTrades,
-		},
-	})
+	return k.send(NewTradesSubscriptionRequest(pairs))
 }
 
 // SubscribeSpread - Spread feed to show best bid and ask price for a currency pair

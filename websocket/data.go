@@ -156,20 +156,19 @@ func (c *Candle) UnmarshalJSON(data []byte) error {
 	return json.Unmarshal(data, &raw)
 }
 
-// Trade - data structure for trade update
 type Trade struct {
-	Price     json.Number
-	Volume    json.Number
-	Time      json.Number
-	Side      string
-	OrderType string
-	Misc      string
+  Symbol    string      `json:"symbol"`
+  Side      string      `json:"side"`
+  Price     json.Number `json:"price"`
+  Quantity  json.Number `json:"qty"`
+  OrderType string      `json:"ord_type"`
+  Timestamp time.Time   `json:"timestamp"`
 }
 
-// UnmarshalJSON - unmarshal candle update
-func (t *Trade) UnmarshalJSON(data []byte) error {
-	raw := []interface{}{&t.Price, &t.Volume, &t.Time, &t.Side, &t.OrderType, &t.Misc}
-	return json.Unmarshal(data, &raw)
+type TradesUpdateMessage struct {
+  Channel string   `json:"channel"`
+  Type    string   `json:"type"`
+  Data    []*Trade `json:"data"`
 }
 
 // Spread - data structure for spread update
